@@ -1,12 +1,46 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
   <title>Responsive Scale Calculator</title>
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    input, select { padding: 6px; margin-right: 8px; }
-    table { margin-top: 16px; border-collapse: collapse; }
-    td, th { border: 1px solid #ccc; padding: 8px 12px; }
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      max-width: 720px;
+      margin: auto;
+    }
+
+    input, select, textarea, button {
+      padding: 6px 8px;
+      font-size: 14px;
+      margin-right: 8px;
+    }
+
+    table {
+      margin-top: 16px;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px 12px;
+      text-align: left;
+    }
+
+    textarea {
+      width: 100%;
+      height: 80px;
+      margin-top: 12px;
+      font-family: monospace;
+      resize: none;
+    }
+
+    button {
+      margin-top: 8px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -22,10 +56,11 @@
   <option value="xl">xl (1.15×)</option>
   <option value="2xl">2xl (1.30×)</option>
 </select>
-<input type="number" id="value" value="640" oninput="calc()" />
+
+<input type="number" id="value" value="640" oninput="calc()" /> px
 
 <table>
-  <tr><th>Breakpoint</th><th>Value</th></tr>
+  <tr><th>Breakpoint</th><th>Value (px)</th></tr>
   <tr><td>base</td><td id="base"></td></tr>
   <tr><td>sm</td><td id="sm"></td></tr>
   <tr><td>md</td><td id="md"></td></tr>
@@ -33,6 +68,11 @@
   <tr><td>xl</td><td id="xl"></td></tr>
   <tr><td>2xl</td><td id="xxl"></td></tr>
 </table>
+
+<h3>Tailwind Classes</h3>
+
+<textarea id="tailwind" readonly></textarea>
+<button onclick="copyTailwind()">Copy Tailwind</button>
 
 <script>
 const scale = {
@@ -44,23 +84,52 @@ const scale = {
   "2xl": 1.30
 };
 
-function fmt(value) {
-  return Number(value.toFixed(2)); // change 2 → 3 if you want more precision
+// round to nearest 0.5
+function roundHalf(value) {
+  return Math.round(value * 2) / 2;
 }
 
 function calc() {
-  const source = document.getElementById('source').value;
-  const inputValue = Number(document.getElementById('value').value || 0);
+  const source = document.getElementById("source").value;
+  const inputValue = Number(document.getElementById("value").value || 0);
 
   // convert input → lg
   const lgValue = inputValue / scale[source];
 
-  document.getElementById('base').textContent = fmt(lgValue * scale.base);
-  document.getElementById('sm').textContent   = fmt(lgValue * scale.sm);
-  document.getElementById('md').textContent   = fmt(lgValue * scale.md);
-  document.getElementById('lg').textContent   = fmt(lgValue);
-  document.getElementById('xl').textContent   = fmt(lgValue * scale.xl);
-  document.getElementById('xxl').textContent  = fmt(lgValue * scale["2xl"]);
+  const values = {
+    base: roundHalf(lgValue * scale.base),
+    sm:   roundHalf(lgValue * scale.sm),
+    md:   roundHalf(lgValue * scale.md),
+    lg:   roundHalf(lgValue),
+    xl:   roundHalf(lgValue * scale.xl),
+    "2xl": roundHalf(lgValue * scale["2xl"])
+  };
+
+  // update table
+  document.getElementById("base").textContent = values.base;
+  document.getElementById("sm").textContent   = values.sm;
+  document.getElementById("md").textContent   = values.md;
+  document.getElementById("lg").textContent   = values.lg;
+  document.getElementById("xl").textContent   = values.xl;
+  document.getElementById("xxl").textContent  = values["2xl"];
+
+  // build tailwind string
+  const tw = [
+    `w-[${values.base}px]`,
+    `sm:w-[${values.sm}px]`,
+    `md:w-[${values.md}px]`,
+    `lg:w-[${values.lg}px]`,
+    `xl:w-[${values.xl}px]`,
+    `2xl:w-[${values["2xl"]}px]`
+  ].join(" ");
+
+  document.getElementById("tailwind").value = tw;
+}
+
+function copyTailwind() {
+  const textarea = document.getElementById("tailwind");
+  textarea.select();
+  document.execCommand("copy");
 }
 
 calc();

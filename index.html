@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Responsive Scale Calculator</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    input, select { padding: 6px; margin-right: 8px; }
+    table { margin-top: 16px; border-collapse: collapse; }
+    td, th { border: 1px solid #ccc; padding: 8px 12px; }
+  </style>
+</head>
+<body>
+
+<h2>Responsive Scale Calculator</h2>
+
+<label>Define value for:</label>
+<select id="source" onchange="calc()">
+  <option value="base">base (0.55×)</option>
+  <option value="sm">sm (0.65×)</option>
+  <option value="md">md (0.75×)</option>
+  <option value="lg" selected>lg (1.00×)</option>
+  <option value="xl">xl (1.15×)</option>
+  <option value="2xl">2xl (1.30×)</option>
+</select>
+<input type="number" id="value" value="640" oninput="calc()" />
+
+<table>
+  <tr><th>Breakpoint</th><th>Value</th></tr>
+  <tr><td>base</td><td id="base"></td></tr>
+  <tr><td>sm</td><td id="sm"></td></tr>
+  <tr><td>md</td><td id="md"></td></tr>
+  <tr><td>lg</td><td id="lg"></td></tr>
+  <tr><td>xl</td><td id="xl"></td></tr>
+  <tr><td>2xl</td><td id="xxl"></td></tr>
+</table>
+
+<script>
+const scale = {
+  base: 0.55,
+  sm:   0.65,
+  md:   0.75,
+  lg:   1.00,
+  xl:   1.15,
+  "2xl": 1.30
+};
+
+function calc() {
+  const source = document.getElementById('source').value;
+  const inputValue = Number(document.getElementById('value').value || 0);
+
+  // Convert input → lg
+  const lgValue = inputValue / scale[source];
+
+  // Calculate all breakpoints
+  document.getElementById('base').textContent = Math.round(lgValue * scale.base);
+  document.getElementById('sm').textContent   = Math.round(lgValue * scale.sm);
+  document.getElementById('md').textContent   = Math.round(lgValue * scale.md);
+  document.getElementById('lg').textContent   = Math.round(lgValue);
+  document.getElementById('xl').textContent   = Math.round(lgValue * scale.xl);
+  document.getElementById('xxl').textContent  = Math.round(lgValue * scale["2xl"]);
+}
+
+calc();
+</script>
+
+</body>
+</html>

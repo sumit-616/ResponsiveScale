@@ -44,20 +44,23 @@ const scale = {
   "2xl": 1.30
 };
 
+function fmt(value) {
+  return Number(value.toFixed(2)); // change 2 → 3 if you want more precision
+}
+
 function calc() {
   const source = document.getElementById('source').value;
   const inputValue = Number(document.getElementById('value').value || 0);
 
-  // Convert input → lg
+  // convert input → lg
   const lgValue = inputValue / scale[source];
 
-  // Calculate all breakpoints
-  document.getElementById('base').textContent = Math.round(lgValue * scale.base);
-  document.getElementById('sm').textContent   = Math.round(lgValue * scale.sm);
-  document.getElementById('md').textContent   = Math.round(lgValue * scale.md);
-  document.getElementById('lg').textContent   = Math.round(lgValue);
-  document.getElementById('xl').textContent   = Math.round(lgValue * scale.xl);
-  document.getElementById('xxl').textContent  = Math.round(lgValue * scale["2xl"]);
+  document.getElementById('base').textContent = fmt(lgValue * scale.base);
+  document.getElementById('sm').textContent   = fmt(lgValue * scale.sm);
+  document.getElementById('md').textContent   = fmt(lgValue * scale.md);
+  document.getElementById('lg').textContent   = fmt(lgValue);
+  document.getElementById('xl').textContent   = fmt(lgValue * scale.xl);
+  document.getElementById('xxl').textContent  = fmt(lgValue * scale["2xl"]);
 }
 
 calc();
